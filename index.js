@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const { connectToDatabase } = require("./db/db");
+const { router } = require("./routes/routes");
 const port = process.env.PORT || 5000;
 const app = express();
 
@@ -10,6 +11,8 @@ app.use(express.json());
 
 connectToDatabase()
   .then(() => {
+    app.use("/", router);
+
     app.get("/", (req, res) => {
       res.send("NEWSPAPER is ready for reading");
     });
