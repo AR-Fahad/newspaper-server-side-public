@@ -6,18 +6,23 @@ const {
   updateArticleByAdmin,
   deleteArticle,
 } = require("../controllers/articles");
+const { setPublisher, getPublishers } = require("../controllers/publishers");
 
 const router = express.Router();
 
-// users CRUD
+// users collection
 router.get("/users", getUsers);
 router.post("/users", setUser);
 router.patch("/users/:id", updateUser);
 
-// article CRUD
+// article collection
 router.get("/admin/articles", getArticlesByAdmin);
 router.post("/articles", setArticle);
 router.patch("/admin/articles/:id", updateArticleByAdmin);
 router.delete("/articles/:id", deleteArticle);
+
+// publishers collection
+router.get("/publishers", getPublishers);
+router.post("/publishers", setPublisher);
 
 module.exports = { router };
