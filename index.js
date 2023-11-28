@@ -18,7 +18,7 @@ connectToDatabase()
     });
 
     app.listen(port, () => {
-      console.log("Server is running successfully");
+      console.log("Server is running successfully on port", port);
     });
   })
   .catch((error) => console.log(error));
