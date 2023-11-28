@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const { getDb } = require("../db/db");
 
 const getUsers = async (req, res) => {
@@ -18,4 +19,17 @@ const setUser = async (req, res) => {
   res.send(result);
 };
 
-module.exports = { getUsers, setUser };
+const updateUser = async (req, res) => {
+  const userId = req.params.id;
+  const query = { _id: new ObjectId(userId) };
+  const updateUser = {
+    $set: {
+      role: "admin",
+    },
+  };
+  const usersCollection = await getDb().collection("users");
+  const result = await usersCollection.updateOne(query, updateUser);
+  res.send(result);
+};
+
+module.exports = { getUsers, setUser, updateUser };
