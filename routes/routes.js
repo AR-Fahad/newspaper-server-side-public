@@ -1,10 +1,11 @@
 const express = require("express");
-const { setUser } = require("../controllers/users");
+const { setUser, getUsers } = require("../controllers/users");
 const { setArticle } = require("../controllers/articles");
 
 const router = express.Router();
 
 // users CRUD
+router.get("/users", getUsers);
 router.post("/users", setUser);
 
 // article CRUD

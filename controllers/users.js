@@ -1,5 +1,11 @@
 const { getDb } = require("../db/db");
 
+const getUsers = async (req, res) => {
+  const usersCollection = await getDb().collection("users");
+  const result = await usersCollection.find().toArray();
+  res.send(result);
+};
+
 const setUser = async (req, res) => {
   const user = req.body;
   const usersCollection = await getDb().collection("users");
@@ -12,4 +18,4 @@ const setUser = async (req, res) => {
   res.send(result);
 };
 
-module.exports = { setUser };
+module.exports = { getUsers, setUser };
