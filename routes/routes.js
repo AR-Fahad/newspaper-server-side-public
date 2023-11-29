@@ -14,6 +14,7 @@ const {
   getArticles,
   getArticle,
   updateArticle,
+  getMyArticlesByUser,
 } = require("../controllers/articles");
 const { setPublisher, getPublishers } = require("../controllers/publishers");
 
@@ -28,6 +29,7 @@ router.patch("/users/:id", updateUserByAdmin); // admin
 
 // articles collection
 router.get("/articles", getArticles); // user
+router.get("/user/articles", getMyArticlesByUser); // user
 router.get("/articles/:id", getArticle); // user
 router.get("/admin/articles", getArticlesByAdmin); // admin
 router.post("/articles", setArticle); // user

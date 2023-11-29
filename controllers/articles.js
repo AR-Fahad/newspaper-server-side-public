@@ -18,6 +18,17 @@ const getArticles = async (req, res) => {
   res.send(result);
 };
 
+const getMyArticlesByUser = async (req, res) => {
+  const filter = req.query;
+  const articlesCollection = await getDb().collection("articles");
+  if (filter?.email) {
+    const query = { author_email: filter.email };
+    const result = await articlesCollection.find(query).toArray();
+    return res.send(result);
+  }
+  return res.status(403).send({ message: "forbidden" });
+};
+
 const getArticle = async (req, res) => {
   const articleId = req.params.id;
   const query = { _id: new ObjectId(articleId) };
@@ -44,11 +55,24 @@ const updateArticle = async (req, res) => {
   const articleId = req.params.id;
   const query = { _id: new ObjectId(articleId) };
   const articlesCollection = await getDb().collection("articles");
-  const update = {
-    $set: {
-      views: updatedArticle?.views,
-    },
-  };
+  let update = {};
+  if (updatedArticle?.views) {
+    update = {
+      $set: {
+        views: updatedArticle?.views,
+      },
+    };
+  }
+
+  if (updatedArticle?.title || updatedArticle?.description) {
+    update = {
+      $set: {
+        title: updatedArticle?.title,
+        description: updatedArticle?.description,
+      },
+    };
+  }
+
   const result = await articlesCollection.updateOne(query, update);
   res.send(result);
 };
@@ -92,6 +116,7 @@ const deleteArticle = async (req, res) => {
 module.exports = {
   getArticles,
   getArticle,
+  getMyArticlesByUser,
   setArticle,
   getArticlesByAdmin,
   updateArticle,
