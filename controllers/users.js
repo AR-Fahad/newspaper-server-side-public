@@ -7,6 +7,31 @@ const getUsers = async (req, res) => {
   res.send(result);
 };
 
+const getUser = async (req, res) => {
+  const filter = req.query;
+  const query = { email: filter?.email };
+  const usersCollection = await getDb().collection("users");
+  const result = await usersCollection.findOne(query);
+  res.send(result);
+};
+
+const updateUser = async (req, res) => {
+  const user = req.query;
+  if (!user?.email) {
+    return;
+  }
+  const query = { email: user?.email };
+  const usersCollection = await getDb().collection("users");
+  const update = {
+    $set: {
+      name: user?.name,
+      img: user?.img,
+    },
+  };
+  const result = await usersCollection.updateOne(query, update);
+  res.send(result);
+};
+
 const setUser = async (req, res) => {
   const user = req.body;
   const usersCollection = await getDb().collection("users");
@@ -19,7 +44,7 @@ const setUser = async (req, res) => {
   res.send(result);
 };
 
-const updateUser = async (req, res) => {
+const updateUserByAdmin = async (req, res) => {
   const userId = req.params.id;
   const query = { _id: new ObjectId(userId) };
   const updateUser = {
@@ -32,4 +57,4 @@ const updateUser = async (req, res) => {
   res.send(result);
 };
 
-module.exports = { getUsers, setUser, updateUser };
+module.exports = { getUsers, getUser, setUser, updateUserByAdmin, updateUser };
