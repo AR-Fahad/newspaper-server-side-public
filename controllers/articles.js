@@ -21,12 +21,22 @@ const getArticles = async (req, res) => {
 const getMyArticlesByUser = async (req, res) => {
   const filter = req.query;
   const articlesCollection = await getDb().collection("articles");
+  if (filter?.email !== req.decoded?.email) {
+    return res.status(403).send({ message: "forbidden access" });
+  }
   if (filter?.email) {
     const query = { author_email: filter.email };
     const result = await articlesCollection.find(query).toArray();
     return res.send(result);
   }
   return res.status(403).send({ message: "forbidden" });
+};
+
+const getPremiumArticles = async (req, res) => {
+  const query = { status: "approved", isPremium: true };
+  const articlesCollection = await getDb().collection("articles");
+  const result = await articlesCollection.find(query).toArray();
+  res.send(result);
 };
 
 const getArticle = async (req, res) => {
@@ -116,6 +126,7 @@ const deleteArticle = async (req, res) => {
 module.exports = {
   getArticles,
   getArticle,
+  getPremiumArticles,
   getMyArticlesByUser,
   setArticle,
   getArticlesByAdmin,

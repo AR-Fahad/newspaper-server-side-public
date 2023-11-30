@@ -1,6 +1,6 @@
 const { ObjectId } = require("mongodb");
 const { getDb } = require("../db/db");
-
+const jwt = require("jsonwebtoken");
 const getUsers = async (req, res) => {
   const usersCollection = await getDb().collection("users");
   const result = await usersCollection.find().toArray();
@@ -9,6 +9,9 @@ const getUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
   const filter = req.query;
+  if (filter?.email !== req.decoded?.email) {
+    return res.status(403).send({ message: "forbidden access" });
+  }
   const query = { email: filter?.email };
   const usersCollection = await getDb().collection("users");
   const result = await usersCollection.findOne(query);
@@ -17,17 +20,28 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const user = req.query;
-  if (!user?.email) {
-    return;
+  if (user?.email !== req.decoded?.email) {
+    return res.status(403).send({ message: "forbidden access" });
   }
   const query = { email: user?.email };
   const usersCollection = await getDb().collection("users");
-  const update = {
-    $set: {
-      name: user?.name,
-      img: user?.img,
-    },
-  };
+  let update;
+  if (user?.name || user?.img) {
+    update = {
+      $set: {
+        name: user?.name,
+        img: user?.img,
+      },
+    };
+  }
+  if (user?.token) {
+    update = {
+      $set: {
+        subscription: true,
+        token: user.token,
+      },
+    };
+  }
   const result = await usersCollection.updateOne(query, update);
   res.send(result);
 };
